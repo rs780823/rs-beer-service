@@ -3,7 +3,6 @@ package com.rslowik.rsbeerservice.web.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rslowik.rsbeerservice.web.dto.BeerDto;
 import com.rslowik.rsbeerservice.web.dto.BeerStyleEnum;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -27,18 +26,6 @@ class BeerControllerTest {
     @Autowired
     private ObjectMapper mapper;
 
-    private BeerDto dto;
-
-    @BeforeEach
-    public void setup() {
-        dto = BeerDto.builder()
-                .beerName("NewAle")
-                .beerStyle(BeerStyleEnum.ALE)
-                .upc(12345654L)
-                .price(new BigDecimal("12.45"))
-                .build();
-    }
-
     @Test
     void getBeerById() throws Exception {
         mockMvc.perform(
@@ -50,7 +37,7 @@ class BeerControllerTest {
 
     @Test
     void createBeer() throws Exception {
-        String beerDtoJson = mapper.writeValueAsString(dto);
+        String beerDtoJson = mapper.writeValueAsString(getValidBeerDto());
 
         mockMvc.perform(
                 post(URI)
@@ -62,7 +49,7 @@ class BeerControllerTest {
 
     @Test
     void updateBeer() throws Exception {
-        String beerDtoJson = mapper.writeValueAsString(dto);
+        String beerDtoJson = mapper.writeValueAsString(getValidBeerDto());
 
         mockMvc.perform(
                 put(URI + UUID.randomUUID().toString())
@@ -70,5 +57,14 @@ class BeerControllerTest {
                         .content(beerDtoJson)
         )
                 .andExpect(status().isNoContent());
+    }
+
+    private BeerDto getValidBeerDto() {
+        return BeerDto.builder()
+                .beerName("NewAle")
+                .beerStyle(BeerStyleEnum.ALE)
+                .upc(12345654L)
+                .price(new BigDecimal("12.45"))
+                .build();
     }
 }
