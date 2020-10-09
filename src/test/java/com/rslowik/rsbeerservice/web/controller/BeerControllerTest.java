@@ -2,12 +2,15 @@ package com.rslowik.rsbeerservice.web.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rslowik.rsbeerservice.web.dto.BeerDto;
+import com.rslowik.rsbeerservice.web.dto.BeerStyleEnum;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -24,6 +27,18 @@ class BeerControllerTest {
     @Autowired
     private ObjectMapper mapper;
 
+    private BeerDto dto;
+
+    @BeforeEach
+    public void setup() {
+        dto = BeerDto.builder()
+                .beerName("NewAle")
+                .beerStyle(BeerStyleEnum.ALE)
+                .upc(12345654L)
+                .price(new BigDecimal("12.45"))
+                .build();
+    }
+
     @Test
     void getBeerById() throws Exception {
         mockMvc.perform(
@@ -35,7 +50,6 @@ class BeerControllerTest {
 
     @Test
     void createBeer() throws Exception {
-        BeerDto dto = BeerDto.builder().build();
         String beerDtoJson = mapper.writeValueAsString(dto);
 
         mockMvc.perform(
@@ -48,7 +62,6 @@ class BeerControllerTest {
 
     @Test
     void updateBeer() throws Exception {
-        BeerDto dto = BeerDto.builder().build();
         String beerDtoJson = mapper.writeValueAsString(dto);
 
         mockMvc.perform(
