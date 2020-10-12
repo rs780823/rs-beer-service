@@ -1,6 +1,7 @@
 package com.rslowik.rsbeerservice.web.controller;
 
 import com.rslowik.rsbeerservice.repositories.BeerRepository;
+import com.rslowik.rsbeerservice.services.BeerService;
 import com.rslowik.rsbeerservice.web.dto.BeerDto;
 import com.rslowik.rsbeerservice.web.mappers.BeerMapper;
 import lombok.RequiredArgsConstructor;
@@ -18,11 +19,11 @@ public class BeerController {
 
     private final BeerMapper mapper;
     private final BeerRepository repository;
+    private final BeerService service;
 
     @GetMapping("/{beerId}")
     public ResponseEntity<BeerDto> getBeerById(@PathVariable("beerId") UUID beerId) {
-        BeerDto result = mapper.beerToBeerDto(repository.findById(beerId).get());
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return new ResponseEntity<>(service.getBeerById(beerId), HttpStatus.OK);
     }
 
     @PostMapping
@@ -33,14 +34,7 @@ public class BeerController {
 
     @PutMapping("/{beerId}")
     public ResponseEntity<BeerDto> updateBeer(@PathVariable("beerId") UUID beerId, @Validated @RequestBody BeerDto beerDto) {
-        repository.findById(beerId).ifPresent(beer -> {
-            beer.setBeerName(beerDto.getBeerName());
-            beer.setBeerStyle(beerDto.getBeerStyle().name());
-            beer.setPrice(beerDto.getPrice());
-            beer.setUpc(beerDto.getUpc());
-
-            repository.save(beer);
-        });
+        service.updateBeer(beerId, beerDto);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
