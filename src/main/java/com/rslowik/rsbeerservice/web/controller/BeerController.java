@@ -1,6 +1,5 @@
 package com.rslowik.rsbeerservice.web.controller;
 
-import com.rslowik.rsbeerservice.repositories.BeerRepository;
 import com.rslowik.rsbeerservice.services.BeerService;
 import com.rslowik.rsbeerservice.web.dto.BeerDto;
 import com.rslowik.rsbeerservice.web.mappers.BeerMapper;
@@ -18,7 +17,6 @@ import java.util.UUID;
 public class BeerController {
 
     private final BeerMapper mapper;
-    private final BeerRepository repository;
     private final BeerService service;
 
     @GetMapping("/{beerId}")
@@ -28,7 +26,7 @@ public class BeerController {
 
     @PostMapping
     public ResponseEntity<BeerDto> createBeer(@Validated @RequestBody BeerDto beerDto) {
-        repository.save(mapper.beerDtoToBeer(beerDto));
+        service.saveNewBeer(beerDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
